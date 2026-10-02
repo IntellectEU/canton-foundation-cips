@@ -11,7 +11,7 @@
     Jose Velasco
   Status: Draft
   Type: Standard Track
-  Created: 2026-09-30
+  Created: 2026-09-dd
   License: CC0-1.0
 
 </pre>
@@ -38,10 +38,10 @@ Align the Daml ledger model with current practices when it comes to the manageme
 
 Before introduction of this CIP things worked as follows:
 
-- SV Nodes are represented on ledger with a weight assigned to them
+- SV Nodes are represented on ledger with a weight assigned to them.
 - Each SV Node keeps a configuration (off-ledger) of their SV Right Owners and their beneficiaries (including the weights)
-- For coupon creation, each SV Node uses the beneficiaries mechanism present in the Daml model to create coupons
-  for their SV Right Owners and their beneficiaries with weights derived from their off-ledger configuration
+- For coupon creation, each SV Node uses the beneficiaries mechanism present in the Daml model to create coupons.
+  for their SV Right Owners and their beneficiaries with weights derived from their off-ledger configuration.
 - Adding or removing a new SV Right Owner involves the SV Node requesting a vote on changing its own reward weight,
   and then the node operator updating the off-ledger configuration of beneficiaries of the node.
 - All other SVs need to configure their off-ledger configuration of the total weight of the node, which
@@ -51,14 +51,15 @@ Crucially, SV Right Owners and beneficiaries are not represented on ledger.
 
 This CIP introduces:
 
-- Daml ledger data model including `SvRightOwner` and `SvRightOwnerInfo` that stores `rewardWeight` 
-- Elimination of the off-ledger weight configuration after migration
-- SV Right Owner onboarding, offboarding and weight update requires approval from the SV Nodes
-- The weights of any SV Right Owners can be updated independently and in parallel
-- An SV Right Owner can only mint rewards if its SV Node and beneficiaries participate in the minting workflow for that round
+- Daml ledger data model including `SvRightOwner` and `SvRightOwnerInfo` that stores `rewardWeight` .
+- Elimination of the off-ledger weight configuration.
+- SV Right Owner onboarding, offboarding and weight update requires an on-ledger governance vote.
+- The weights of any SV Right Owners can be updated independently and in parallel.
+- An SV Right Owner’s reward coupons for a round can be issued only by its configured SV Node Operator.
+- The SV Node Operator must issue coupons to all recipients according to the on-ledger beneficiary configuration.
 - SV Right Owners is able to manage their own beneficiaries without requiring approval or voting of other SVs.
-- Migration from the legacy to the new model invalidates the legacy SV coupon creation flow
-- Migration does not result in any loss or duplication of rewards
+- Migration from the legacy to the new model invalidates the legacy SV coupon creation flow.
+- Migration does not result in any loss or duplication of rewards.
 
 ### 2. Implementation Mechanics
 #### Introduction
@@ -120,8 +121,8 @@ This migration voted action will be made available in the voting UI.
 As SV Nodes no longer have any weight associated with them, onboarding flow changed to reflect this.
 In the typical case of a new SV Node with some associated reward weight, the onboarding will be done in two steps:
 
-1. The SV Node is onboarded (with no weight attached to them)
-2. We onboard them as an SV Right Owner
+1. The SV Node is onboarded (with no weight attached to them).
+2. We onboard them as an SV Right Owner.
 
 The same two steps are required for offboarding.
 
@@ -134,7 +135,7 @@ SV Right Owner weight being completely off-ledger has at least a few problems:
   We have to wait for the voting to be complete before requesting another SV Node weight change.
 - Full trust of SV Nodes is required when it comes to managing their SV Right Owners. Each SV Node can arbitrarily change their reward allocation every round.
 - SV Right Owners have to bother their SV Node to have them change their off-ledger configuration when managing their beneficiaries.
-- Further developments that rely on SV Right Owner weight are currently hard to implement (e.g. weighed voting or automatic weight updates)
+- Further developments that rely on SV Right Owner weight are currently hard to implement (e.g. weighed voting or automatic weight updates).
 - SV Right Owners and their weights are not visible publicly in block explorers and in Scan APIs.
 
 This proposal solves all of these issues and provides a strong base for further developments involving SV weight and rewards.
@@ -158,10 +159,10 @@ Third party ledger observability tools might require an update to reflect change
 The implementation affects exising system only after a migration is voted on and executed.
 
 ### Data model
-The `SvInfo.svRewardWeight` field is deprecated. It will be required to be 0 after migration. 
+The `SvInfo.svRewardWeight` field is deprecated. It will be required to be 0 after migration.
 It is being replaced with `SvRightOwnerInfo.rewardWeight`.
 
-This CIP obsoletes a daml contract choice related to `svRewardWeight`: 
+This CIP obsoletes a daml contract choice related to `svRewardWeight`:
 `DsoRules_UpdateSvRewardWeight` is replaced by `DsoRules_ExecuteUpdateSvRightOwnerInfoInstruction`
 
 Old contract can be called, but will return an error. In addition, the `svRewardWeight` parameter is deprecated in the following choices
@@ -171,7 +172,7 @@ Old contract can be called, but will return an error. In addition, the `svReward
 
 As a consequence, CIP-0111 mentions of `Update Sv Reward Weight` should be understood in terms of updates of `RightOwnerInfo` after a migration defined in this proposal is complete.
 
-Moreover, existing SV onboarding flow will be impacted by migration. Any onboarding with nonzero `SvInfo.svRewardWeight` will be rejected. 
+Moreover, existing SV onboarding flow will be impacted by migration. Any onboarding with nonzero `SvInfo.svRewardWeight` will be rejected.
 
 ### Rewards
 Introduction of SvRightOwner preserves the existing reward system. However, the daml rewards creation choice is changing:
@@ -186,3 +187,4 @@ Implementation can be tracked in Splice feature fork: https://github.com/canton-
 ## Changelog
 
 * 2026-09-30: Initial draft.
+* 2026-10-02: Clarified SV Node operator's role in the minting process.
