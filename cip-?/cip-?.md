@@ -127,6 +127,13 @@ In the typical case of a new SV Node with some associated reward weight, the onb
 
 The same two steps are required for complete offboarding.
 
+#### Changes to Escrowed Rewards
+
+The current escrowed rewards system, which uses a ghost-party setup configured off-ledger, can be directly translated to an on-ledger configuration using `SvRightOwner`.
+The operational logic remains the same.
+After migration, a ghost party can be added by exercising the `DsoRules_AddSvRightOwner` choice.
+The reward weight calculation and minting process remain unchanged.
+
 ## Motivation
 
 Keeping SV Right Owner weights completely off-ledger has several problems:
@@ -189,4 +196,4 @@ The implementation can be tracked in the Splice feature fork: https://github.com
 
 * 2026-09-30: Initial draft.
 * 2026-10-02: Clarified SV Node operator's role in the minting process.
-* 2026-10-05: Editorial changes.
+* 2026-10-05: Editorial changes. Added Changes to Escrowed Rewards section.
