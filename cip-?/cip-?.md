@@ -10,7 +10,7 @@
     Przemysław Pawelec
     Jose Velasco
   Status: Draft
-  Type: Standard Track
+  Type: Standards Track
   Created: 2026-09-30
   License: CC0-1.0
 
@@ -78,7 +78,7 @@ After the migration to the new model, SV Nodes no longer have any weight associa
 The `SvInfo.svRewardWeight` field is deprecated. See the Backwards Compatibility section for more information.
 
 #### SV Right Owner Management
-A UI is provided so that an SV Right Owner administrator can:
+A UI will be built and provided as part of implementing this CIP, as a separate tab in the SV governance dApp, so that an SV Right Owner administrator can:
 
 - View information about its SV Right Owner status
 - Manage its beneficiaries
@@ -90,24 +90,24 @@ supported by an endpoint in the Scan API.
 
 A few actions that require a vote are added to the Daml model and the SV UI to manage SV Right Owners in the following ways:
 
-- Onboard a new SV Right Owner
+- Add (onboard) an SV Right Owner
   - `DsoRules_AddSvRightOwner`
-- Update SV Right Owner reward weight
+- Update an SV Right Owner's reward weight or SV Node
   - `DsoRules_UpdateSvRightOwnerInfo`
-- Offboard an SV Right Owner
+- Remove (offboard) an SV Right Owner
   - `DsoRules_RemoveSvRightOwner`
-- Migrate an SV Right Owner to a different SV Node
-  - `DsoRules_UpdateSvRightOwnerInfo`
+- Migrate the network to on-ledger SV Right Owners (once)
+  - `DsoRules_MigrateToOnLedgerSvRightOwners`
 
 #### Coupon Creation
 SV Reward Coupons continue to be created by each SV Node on behalf of SV Right Owners hosted on that node for reward minting.
-One `SVRewardCoupon` per round will be created for each beneficiary of each SV Right Owner (plus one for the SV Right Owner itself if there is leftover weight).
+One `SvRewardCoupon` per round will be created for each beneficiary of each SV Right Owner (plus one for the SV Right Owner itself if there is leftover weight).
 
 `DsoRules` is extended with a choice, `DsoRules_ReceiveSvRewardCouponV2`, to create these coupons.
 `SvRewardState` tracks the reward collection state for the SV Right Owners to ensure
 no double-dipping happens.
 
-Within an SV Right Owner, the Daml model guarantees that each beneficiary gets at most one `SVRewardCoupon` per round, with the correct weight.
+Within an SV Right Owner, the Daml model guarantees that each beneficiary gets at most one `SvRewardCoupon` per round, with the correct weight.
 Making sure that each such coupon actually gets created will _not_ be enforced by the Daml model.
 In the case of an SV Node outage (or a malicious SV Node), no coupons are created for any of the SV Right Owners hosted on that SV or their beneficiaries.
 
@@ -132,7 +132,7 @@ The same two steps are required for complete offboarding.
 
 The current escrowed rewards system, which uses a ghost-party setup configured off-ledger, can be directly translated to an on-ledger configuration using `SvRightOwner`.
 The operational logic remains the same.
-After migration, a ghost party can be added by exercising the `DsoRules_AddSvRightOwner` choice.
+After migration, a ghost party can be voted in as an SV Right Owner (`DsoRules_AddSvRightOwner`).
 The reward weight calculation and minting process remain unchanged.
 
 ## Motivation
@@ -172,14 +172,13 @@ The `SvInfo.svRewardWeight` field is deprecated. It will be required to be 0 aft
 It is being replaced with `SvRightOwnerInfo.rewardWeight`.
 
 This CIP obsoletes a Daml contract choice related to `svRewardWeight`:
-`DsoRules_UpdateSvRewardWeight` is replaced by `DsoRules_ExecuteUpdateSvRightOwnerInfoInstruction`
+`DsoRules_UpdateSvRewardWeight` is replaced by the vote `DsoRules_UpdateSvRightOwnerInfo`.
 
-The old contract can be called, but it will return an error. In addition, the `svRewardWeight` parameter is deprecated in the following choices:
+After the migration, the old choice is refused. In addition, the `svRewardWeight` parameter is deprecated in the following choices:
 - `DsoRules_AddSv`
 - `DsoRules_ConfirmSvOnboarding`
-- `DsoRules_AddConfirmedSv`
 
-As a consequence, references in CIP-0111 to `Update Sv Reward Weight` should be understood as updates to `RightOwnerInfo` after the migration defined in this proposal is complete.
+As a consequence, references in CIP-0111 to `Update Sv Reward Weight` should be understood as updates to `SvRightOwnerInfo` after the migration defined in this proposal is complete.
 
 Moreover, the existing SV onboarding flow will be affected by migration. Any onboarding with a nonzero `SvInfo.svRewardWeight` will be rejected.
 
