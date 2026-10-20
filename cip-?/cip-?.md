@@ -60,7 +60,7 @@ This CIP introduces the following changes:
 - The SV Node Operator now will issue coupons to all recipients according to the on-ledger beneficiary configuration.
 - SV Right Owners will be able to manage their own beneficiaries without requiring approvals, actions by SV node operators, or votes from other SVs.
 - Migration from the existing to the new model will invalidate the legacy SV coupon creation flow.
-- Migration does not result in any loss or duplication of rewards.
+- Migration does not duplicate rewards. SV Node Operators that continue under the same name keep their rewards. Other SV Right Owners, including those added later, start receiving rewards from the next round.
 
 ### 2. Implementation Mechanics
 #### Introduction
