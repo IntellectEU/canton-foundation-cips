@@ -78,7 +78,7 @@ After the migration to the new model, SV Nodes no longer have any weight associa
 The `SvInfo.svRewardWeight` field is deprecated. See the Backwards Compatibility section for more information.
 
 #### SV Right Owner Management
-A UI will be built and provided as part of implementing this CIP, as a separate tab in the SV governance dApp, so that an SV Right Owner administrator can:
+A UI will be built and provided as part of implementing this CIP, in a new dApp for SV Right Owners, so that an SV Right Owner administrator can:
 
 - View information about its SV Right Owner status
 - Manage its beneficiaries
