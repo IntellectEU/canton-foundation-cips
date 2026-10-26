@@ -56,7 +56,7 @@ This CIP introduces the following changes:
 - Elimination of the off-ledger weight configuration.
 - SV Right Owner onboarding, offboarding, and weight updates via on-ledger governance votes.
 - The weights of any SV Right Owners can be updated independently and in parallel.
-- As is the case today, in this proposal an SV Right Owner’s reward coupons for a round can be issued only by its configured SV Node Operator.
+- As is the case today, in this proposal SV Right Owner is associated with a single SV Right Node Operator and an SV Right Owner’s reward coupons for a round can be issued only by its configured SV Node Operator.
 - The SV Node Operator now will issue coupons to all recipients according to the on-ledger beneficiary configuration.
 - SV Right Owners will be able to manage their own beneficiaries without requiring approvals, actions by SV node operators, or votes from other SVs.
 - Migration from the existing to the new model will invalidate the legacy SV coupon creation flow.
@@ -109,7 +109,7 @@ no double-dipping happens.
 
 Within an SV Right Owner, the Daml model guarantees that each beneficiary gets at most one `SvRewardCoupon` per round, with the correct weight.
 Making sure that each such coupon actually gets created will _not_ be enforced by the Daml model.
-In the case of an SV Node outage (or a malicious SV Node), no coupons are created for any of the SV Right Owners hosted on that SV or their beneficiaries.
+In the case of an SV Node outage (or a malicious SV Node), no coupons are created for any of the SV Right Owners hosted on that SV Node or their beneficiaries.
 
 No UI changes are expected regarding coupon creation.
 
@@ -199,3 +199,5 @@ The implementation can be tracked in the Splice feature fork: https://github.com
 * 2026-10-05: Editorial changes. Added Changes to Escrowed Rewards section.
 * 2026-10-06: Wording corrections and clarifications.
 * 2026-10-19: Additional editorial changes.
+* 2026-10-20: Reward during migration section is now more precise.
+* 2026-10-26: Mentioned dApp as a chosen way to deliver beneficiaries management.
